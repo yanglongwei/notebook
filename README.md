@@ -5,11 +5,9 @@ classLoader整理
 
 有两种方式可以打破classLoader的双亲委派机制：
 1，使用Thread.currentThread().getContextClassLoader()，比如SPI机制，具体实现可参考JDBC的driver;
-
 2，继承ClassLoader并覆写loadClass方法，ClassLoader的loadClass方法里面有双亲委派机制的实现（注意findClass是loadClass里面的一个方法，一般是实现从哪个地方加载类，最后一般调用defineClass方法将流转换成class），tomcat打破双亲委派就是以此种方式实现的。
 
 下面扩展一下tomcat的具体实现方式：
-
 tomcat中具体的实现是WebappClassLoader，实现方法在其父类WebappClassLoaderBase的loadClass里面，主要逻辑是先用ExtClassLoader加载，
 再用自定义的classLoader加载，最后让AppClassLoader加载，代码如下
 ```java
