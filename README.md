@@ -4,7 +4,7 @@
 classLoader整理
 
 有两种方式可以打破classLoader的双亲委派机制：
-1，使用Thread.currentThread().getContextClassLoader()，比如SPI机制，具体实现可参考JDBC的driver;、
+1，使用Thread.currentThread().getContextClassLoader()，比如SPI机制，具体实现可参考JDBC的driver;
 2，继承ClassLoader并覆写loadClass方法，ClassLoader的loadClass方法里面有双亲委派机制的实现（注意findClass是loadClass里面的一个方法，一般是实现从哪个地方加载类，最后一般调用defineClass方法将流转换成class），tomcat打破双亲委派就是以此种方式实现的。
 
 下面扩展一下tomcat的具体实现方式：
@@ -66,4 +66,5 @@ public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundExce
         throw new ClassNotFoundException(name);
 ```
 findClass方法里面会调用findClassInternal方法，主要实现是查找webapps下面具体项目的WEB-INF包下面的classes文件夹和**lib文件夹**。
+
 tomcat会为每个项目创建一个WebAppClassLoader，然后调用其loadClass方法，这样就可以实现不同版本的jar包可以用不同的类加载加载，做到不同项目之间jar的隔离，从而打破双亲委派模型。
